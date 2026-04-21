@@ -1,0 +1,5 @@
+{"@timestamp":"2026-04-21T22:42:14.938+08:00","caller":"prometheus/agent.go:40","content":"Starting prometheus agent at 0.0.0.0:9083","level":"info"}
+Starting server at 0.0.0.0:8003...
+{"@timestamp":"2026-04-21T22:43:14.881+08:00","caller":"stat/usage.go:82","content":"CPU: 7m, MEMORY: Alloc=6.4Mi, TotalAlloc=10.0Mi, Sys=17.3Mi, NumGC=4","level":"stat"}
+{"@timestamp":"2026-04-21T22:43:14.953+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 7, total: 0, pass: 0, drop: 0","level":"stat"}
+signal: killed

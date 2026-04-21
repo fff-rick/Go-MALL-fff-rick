@@ -1,0 +1,7 @@
+{"@timestamp":"2026-04-21T22:42:14.915+08:00","caller":"internal/discovbuilder.go:35","content":"bad resolver state","level":"error"}
+{"@timestamp":"2026-04-21T22:42:14.920+08:00","caller":"internal/discovbuilder.go:35","content":"bad resolver state","level":"error"}
+Starting rpc server at 0.0.0.0:9003...
+{"@timestamp":"2026-04-21T22:42:14.928+08:00","caller":"prometheus/agent.go:40","content":"Starting prometheus agent at 0.0.0.0:10093","level":"info"}
+{"@timestamp":"2026-04-21T22:43:14.865+08:00","caller":"stat/usage.go:82","content":"CPU: 8m, MEMORY: Alloc=4.8Mi, TotalAlloc=10.6Mi, Sys=17.6Mi, NumGC=4","level":"stat"}
+{"@timestamp":"2026-04-21T22:43:14.929+08:00","caller":"load/sheddingstat.go:61","content":"(rpc) shedding_stat [1m], cpu: 8, total: 0, pass: 0, drop: 0","level":"stat"}
+signal: killed
