@@ -7,7 +7,6 @@ import (
 	"mall/service/order/model"
 	"mall/service/order/rpc/internal/svc"
 	"mall/service/order/rpc/pb/order"
-	"mall/service/user/rpc/pb/user"
 
 	"github.com/dtm-labs/dtmgrpc"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -16,31 +15,21 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	UnknownErr = status.Error(500, "Unexcepted error")
-)
-
-type CreateLogic struct {
+type CreateRevertLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogic {
-	return &CreateLogic{
+func NewCreateRevertLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateRevertLogic {
+	return &CreateRevertLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *CreateLogic) Create(in *order.CreateRequest) (*order.CreateResponse, error) {
-	if _, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &user.UserInfoRequest{
-		Id: in.Uid,
-	}); err != nil {
-		return nil, err
-	}
-
+func (l *CreateRevertLogic) CreateRevert(in *order.CreateRequest) (*order.CreateResponse, error) {
 	db, err := sqlx.NewMysql(l.svcCtx.Config.Mysql.DataSource).RawDB()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -51,16 +40,17 @@ func (l *CreateLogic) Create(in *order.CreateRequest) (*order.CreateResponse, er
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	newOrder := &model.Order{
-		Uid:    uint64(in.Uid),
-		Pid:    uint64(in.Pid),
-		Amount: uint64(in.Amount),
-		Status: uint64(in.Status),
-	}
-
 	if err := barrier.CallWithDB(db, func(tx *sql.Tx) error {
-		_, err := l.svcCtx.OrderModel.TxInsert(tx, newOrder)
-		return err
+		resOrder, err := l.svcCtx.OrderModel.FindOneByUidPidAmountStatus(in.Uid, in.Pid, in.Amount, in.Status)
+		if err != nil {
+			if err == model.ErrNotFound {
+				return nil
+			}
+			return err
+		}
+
+		resOrder.Status = 9
+		return l.svcCtx.OrderModel.TxUpdate(tx, resOrder)
 	}); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

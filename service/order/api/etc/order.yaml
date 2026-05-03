@@ -14,6 +14,14 @@ Auth:
   AccessSecret: uOvKLmVfztaXGpNYd4Z0I1SiT7MweJhl
   AccessExpire: 86400
 
+DtmServer: etcd://etcd:2379/dtmservice
+DtmRpc:
+  App: dtm
+  Token: dtm-branch-token
+DtmTarget:
+  Order: 127.0.0.1:9002
+  Product: 127.0.0.1:9001
+
 OrderRpc:
   App: orderapi
   Token: ndjaigyw5dgsesauidbisk
