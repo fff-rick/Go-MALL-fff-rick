@@ -18,6 +18,7 @@ type (
 		TxInsert(tx *sql.Tx, data *Order) (sql.Result, error)
 		TxUpdate(tx *sql.Tx, data *Order) error
 		FindOneByUid(uid int64) (*Order, error)
+		FindOneByUidPidAmountStatus(uid, pid, amount, status int64) (*Order, error)
 		orderModel
 	}
 
@@ -53,6 +54,22 @@ func (m *defaultOrderModel) FindOneByUid(uid int64) (*Order, error) {
 
 	query := fmt.Sprintf("select %s from %s where `uid` = ? order by create_time desc limit 1", orderRows, m.table)
 	err := m.QueryRowNoCache(&resp, query, uid)
+
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultOrderModel) FindOneByUidPidAmountStatus(uid, pid, amount, status int64) (*Order, error) {
+	var resp Order
+
+	query := fmt.Sprintf("select %s from %s where `uid` = ? and `pid` = ? and `amount` = ? and `status` = ? order by id desc limit 1", orderRows, m.table)
+	err := m.QueryRowNoCache(&resp, query, uid, pid, amount, status)
 
 	switch err {
 	case nil:
